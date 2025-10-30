@@ -1,0 +1,53 @@
+import time
+from dataclasses import dataclass
+from typing import Dict
+
+
+@dataclass
+class CircuitBreaker:
+    failure_threshold: int = 5
+    recovery_timeout: float = 30.0
+    half_open_max_calls: int = 1
+
+    _failures: Dict[str, int] = None
+    _open_until: Dict[str, float] = None
+    _half_open_calls: Dict[str, int] = None
+
+    def __post_init__(self):
+        self._failures = {}
+        self._open_until = {}
+        self._half_open_calls = {}
+
+    def state(self, key: str) -> str:
+        now = time.time()
+        if key in self._open_until:
+            if now >= self._open_until[key]:
+                return "half-open"
+            return "open"
+        return "closed"
+
+    def record_success(self, key: str):
+        self._failures[key] = 0
+        self._open_until.pop(key, None)
+        self._half_open_calls.pop(key, None)
+
+    def record_failure(self, key: str):
+        self._failures[key] = self._failures.get(key, 0) + 1
+        if self._failures[key] >= self.failure_threshold:
+            self._open_until[key] = time.time() + self.recovery_timeout
+
+    def allow_call(self, key: str) -> bool:
+        s = self.state(key)
+
+        if s == "closed":
+            return True
+
+        if s == "open":
+            return False
+
+        calls = self._half_open_calls.get(key, 0)
+        if calls < self.half_open_max_calls:
+            self._half_open_calls[key] = calls + 1
+            return True
+
+        return False
