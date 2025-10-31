@@ -4,13 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "0.1.0b2"
+version = "0.1.1"
 description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
-readme = "README.md"
-license = { text = "MIT" }
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
 authors = [{ name = "Plamen Nikolov" }]
 requires-python = ">=3.9"
-dependencies = ["requests>=2.28"]
+dependencies = [
+    "requests>=2.28",
+]
 
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -18,7 +20,6 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries",
     "Topic :: Internet :: WWW/HTTP",
@@ -28,6 +29,16 @@ classifiers = [
 Homepage = "https://github.com/pgnikolov/resilient-http"
 Issues = "https://github.com/pgnikolov/resilient-http/issues"
 
-[tool.setuptools.packages.find]
-include = ["resilient_http"]
-exclude = ["tests", "examples"]
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8",
+    "mypy",
+    "build",
+    "check-wheel-contents",
+]
+
+[tool.setuptools]
+packages = { find = { include = ["resilient_http"], exclude = ["tests*", "examples*"] } }
+include-package-data = false

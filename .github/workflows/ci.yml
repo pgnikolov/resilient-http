@@ -5,46 +5,59 @@ on:
   pull_request:
 
 jobs:
-  test:
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install package (editable) + dev deps
+      - name: Install dependencies
         run: |
-          pip install -e .[dev]
+          python -m pip install --upgrade pip
+          pip install .[dev]
       - name: Run tests
         run: pytest -q
 
   lint:
+    name: Lint & type-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
-      - name: Install dev deps
+      - name: Install lint dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e .[dev]
-
-      - name: black (check)
+          pip install .[dev]
+      - name: Black (check)
         run: black --check resilient_http tests examples
-
-      - name: flake8
+      - name: Flake8
         run: flake8 resilient_http tests
-
-      - name: mypy
+      - name: Mypy
         run: mypy resilient_http
+
+  build:
+    name: Build & validate distributions
+    runs-on: ubuntu-latest
+    needs: [tests, lint]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install build tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install build check-wheel-contents
+      - name: Clean dist artifacts
+        run: rm -rf dist build
+      - name: Build wheel and sdist
+        run: python -m build
+      - name: Validate wheel contents
+        run: check-wheel-contents dist/*.whl
