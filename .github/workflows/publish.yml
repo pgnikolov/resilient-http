@@ -3,7 +3,7 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*"
 
 permissions:
   id-token: write
@@ -17,22 +17,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Clean old dist
-        run: rm -rf dist build *.egg-info
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install build tools
-        run: pip install build
+      - name: Install build deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install build
+
+      - name: Clean old dist
+        run: rm -rf dist
 
       - name: Build package
         run: python -m build
 
       - name: Verify package metadata
-        run: pip install check-wheel-contents && check-wheel-contents dist
+        run: |
+          pip install twine
+          twine check dist/*
 
-      - name: Publish to PyPI
+      - name: Publish to PyPI via OIDC
         uses: pypa/gh-action-pypi-publish@v1.10.3
+        with:
+          verify_metadata: true

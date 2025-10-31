@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "0.1.0a8"
-description = "Resilience layer for Python HTTP clients (smart retries + circuit breaker + jitter backoff)"
+version = "0.1.0b2"
+description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Plamen Nikolov" }]
@@ -24,21 +24,10 @@ classifiers = [
     "Topic :: Internet :: WWW/HTTP",
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7",
-    "pytest-cov>=4",
-    "black>=24",
-    "flake8>=7",
-    "mypy>=1.8",
-    "types-requests",
-]
-
 [project.urls]
 Homepage = "https://github.com/pgnikolov/resilient-http"
-Source = "https://github.com/pgnikolov/resilient-http"
 Issues = "https://github.com/pgnikolov/resilient-http/issues"
 
 [tool.setuptools.packages.find]
 include = ["resilient_http"]
-exclude = ["tests*", "examples*"]
+exclude = ["tests", "examples"]
