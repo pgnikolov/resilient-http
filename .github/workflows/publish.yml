@@ -35,6 +35,12 @@ jobs:
           check-wheel-contents dist/*.whl
           twine check dist/*
 
+      - name: Debug wheel metadata
+        run: |
+          echo "Contents of dist:"
+          ls -la dist
+          unzip -p dist/*.whl *.dist-info/METADATA
+
       - name: Publish to PyPI via OIDC
         uses: pypa/gh-action-pypi-publish@v1.10.3
         with:
