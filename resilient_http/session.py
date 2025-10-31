@@ -50,9 +50,7 @@ class ResilientRequestsSession:
 
                 # Check retry by HTTP status
                 if not self.retry_policy.should_retry(
-                    method,
-                    attempt,
-                    status=resp.status_code
+                    method, attempt, status=resp.status_code
                 ):
                     # Permanent or exhausted → failure
                     if 400 <= resp.status_code < 600:
@@ -74,10 +72,17 @@ class ResilientRequestsSession:
                 attempt += 1
 
     # Convenience helpers
-    def get(self, url, **kw): return self.request("GET", url, **kw)
-    def post(self, url, **kw): return self.request("POST", url, **kw)
-    def put(self, url, **kw): return self.request("PUT", url, **kw)
-    def delete(self, url, **kw): return self.request("DELETE", url, **kw)
+    def get(self, url, **kw):
+        return self.request("GET", url, **kw)
+
+    def post(self, url, **kw):
+        return self.request("POST", url, **kw)
+
+    def put(self, url, **kw):
+        return self.request("PUT", url, **kw)
+
+    def delete(self, url, **kw):
+        return self.request("DELETE", url, **kw)
 
     # Helpers
     def _circuit_key(self, method: str, url: str) -> str:

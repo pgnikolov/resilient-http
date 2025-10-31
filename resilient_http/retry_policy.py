@@ -23,9 +23,17 @@ class RetryPolicy:
 
         if self.backoff is None:
             from .backoff import full_jitter, exponential_backoff
+
             self.backoff = full_jitter(exponential_backoff())
 
-    def should_retry(self, method: str, attempt: int, *, status: Optional[int] = None, exc: Optional[BaseException] = None) -> bool:
+    def should_retry(
+        self,
+        method: str,
+        attempt: int,
+        *,
+        status: Optional[int] = None,
+        exc: Optional[BaseException] = None,
+    ) -> bool:
         if attempt >= self.max_attempts - 1:
             return False
 

@@ -11,8 +11,7 @@ def test_no_retry_on_400(monkeypatch):
             return FakeResp()
 
     s = ResilientRequestsSession(
-        retry_policy=RetryPolicy(max_attempts=3),
-        session=FakeSession()
+        retry_policy=RetryPolicy(max_attempts=3), session=FakeSession()
     )
 
     resp = s.get("http://example.com")
