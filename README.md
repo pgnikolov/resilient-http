@@ -1,18 +1,30 @@
 # resilient-http
 
-**Resilience layer for Python HTTP clients** (Requests/HTTPX): smart retries with jitter, idempotency-aware policies, and a circuit breaker with half-open probes.
+**Resilience layer for Python HTTP clients**: smart retries (idempotency-aware), jitter backoff, and a circuit breaker with half-open probes.
+
+Designed for production workloads where flaky upstreams, throttling (429) and transient 5xx failures are reality.
 
 [![CI](https://img.shields.io/github/actions/workflow/status/pgnikolov/resilient-http/ci.yml?label=CI)](https://github.com/pgnikolov/resilient-http/actions)
-[![Python](https://img.shields.io/badge/python-3.9--3.13-blue.svg)](#)
+![Python](https://img.shields.io/badge/python-3.9--3.13-blue.svg)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/resilient-http?color=blue)](https://pypi.org/project/resilient-http/)
+[![Typing](https://img.shields.io/badge/typing-mypy%20strict-blue.svg)](#)
+
+---
 
 ## Install
 
 ```bash
 pip install resilient-http
-# dev (from source)
-pip install -e .[dev]
 ````
+
+Development install:
+
+```bash
+pip install -e .[dev]
+```
+
+---
 
 ## Quickstart
 
@@ -20,42 +32,85 @@ pip install -e .[dev]
 from resilient_http.session import ResilientRequestsSession
 from resilient_http.retry_policy import RetryPolicy
 
-s = ResilientRequestsSession(retry_policy=RetryPolicy(max_attempts=4))
-resp = s.get("https://httpbin.org/status/503")
-print(resp.status_code)
+session = ResilientRequestsSession(
+    retry_policy=RetryPolicy(max_attempts=4)
+)
+
+resp = session.get("https://httpbin.org/status/503")
+
+print("HTTP:", resp.status_code)
 ```
+
+Expected behavior:
+
+* retry on 503 (and timeouts, 502/504, 429)
+* exponential backoff + jitter
+* stops retrying on permanent errors (400/401/403/404)
+
+---
 
 ## Features
 
-* Smart retry: exception/status-aware, idempotency by default
-* Exponential backoff with jitter (full/equal jitter)
-* Circuit breaker (closed → open → half-open)
-* Requests wrapper (HTTPX support planned)
-* Zero-config defaults; extensible policies
+✅ Smart retry (status/exception aware)
 
-## Why
+✅ Exponential backoff (full jitter / equal jitter)
 
-Stop naive retries. Make your HTTP calls resilient under load, rate limits (429), and transient failures (5xx, timeouts).
+✅ Circuit breaker (closed → open → half-open trial)
 
-## Roadmap
+✅ Idempotent-method policy by default
 
-* HTTPX wrapper (sync/async)
-* Pluggable metrics (Prometheus)
+✅ Drop-in wrapper for `requests.Session`
+
+
+Planned
+
+* HTTPX wrapper (`sync` + `async`)
+* Prometheus metrics hooks
 * Persistent circuit state
+* Policy plugins
+
+---
+
+## Why?
+
+Naive sleeps and dumb retry loops don’t survive production load.
+
+This library implements practices from:
+
+* AWS retry strategy (full jitter)
+* Google SRE (equal jitter)
+* Netflix Hystrix-style circuit breaking
+
+Make upstream failures boring. 🧊
+
+---
+
+## Design Principles
+
+* Sensible defaults, override when needed
+* Zero global state
+* Pure python, no patching `requests`
+* Type-safe (`mypy` clean)
+* Works under real latency & chaos scenarios
+
+---
 
 ## Development
 
 ```bash
 python -m venv .venv
 . .venv/Scripts/activate  # Windows
-# or: source .venv/bin/activate  # Linux/macOS
+# source .venv/bin/activate  # Linux/macOS
 
 pip install -e .[dev]
+
 pytest -q
-black resilient_http tests examples
+black resilient_http tests
 flake8 resilient_http tests
 mypy resilient_http
 ```
+
+---
 
 ## License
 

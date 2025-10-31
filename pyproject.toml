@@ -1,21 +1,44 @@
 [build-system]
-requires=["setuptools>=68","wheel"]
-build-backend="setuptools.build_meta"
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name="resilient-http"
-version="0.1.0a0"
-description="Resilience layer for Python HTTP clients"
-readme="README.md"
-authors=[{name="Your Name"}]
-requires-python=">=3.9"
-dependencies=["requests>=2.28"]
+name = "resilient-http"
+version = "0.1.0a0"
+description = "Resilience layer for Python HTTP clients (smart retries + circuit breaker + jitter backoff)"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Plamen Nikolov" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.28",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Internet :: WWW/HTTP",
+]
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=7",
-  "black>=24",
-  "flake8>=7",
-  "mypy>=1.8",
-  "types-requests",
+    "pytest>=7",
+    "pytest-cov>=4",
+    "black>=24",
+    "flake8>=7",
+    "mypy>=1.8",
+    "types-requests",
 ]
+
+[project.urls]
+Homepage = "https://github.com/pgnikolov/resilient-http"
+Source = "https://github.com/pgnikolov/resilient-http"
+Issues = "https://github.com/pgnikolov/resilient-http/issues"
