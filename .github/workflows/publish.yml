@@ -27,8 +27,8 @@ jobs:
 
       - name: Build
         run: |
-          rm -rf dist build *.egg-info
-          python -m build
+          rm -rf dist build 
+          python -m build --sdist --wheel .
 
       - name: Validate artifacts
         run: |
