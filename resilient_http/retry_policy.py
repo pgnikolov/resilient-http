@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from typing import Iterable, Set, Callable, Optional
 
-import requests
+from requests import Timeout, ConnectionError
 
 
 @dataclass
 class RetryPolicy:
     max_attempts: int = 3
     retry_on_status: Set[int] = None
-    retry_on_exceptions: Iterable[type] = (requests.Timeout, requests.ConnectionError)
+    retry_on_exceptions: Iterable[type] = (Timeout, ConnectionError)
     retry_on_methods: Set[str] = None  # default: only idempotent if None
     backoff: Optional[Callable[[int], float]] = None
     give_up_on_status: Set[int] = None  # permanent errors
@@ -24,7 +24,8 @@ class RetryPolicy:
         if self.backoff is None:
             from .backoff import full_jitter, exponential_backoff
 
-            self.backoff = full_jitter(exponential_backoff())
+            exp = exponential_backoff()
+            self.backoff = full_jitter(exp)
 
     def should_retry(
         self,

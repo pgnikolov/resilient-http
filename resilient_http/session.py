@@ -6,7 +6,6 @@ import requests
 from .retry_policy import RetryPolicy
 from .circuit_breaker import CircuitBreaker
 from .exceptions import CircuitOpenError
-from .backoff import exponential_backoff, full_jitter
 
 
 class ResilientRequestsSession:
@@ -37,7 +36,6 @@ class ResilientRequestsSession:
             raise CircuitOpenError(key)
 
         attempt = 0
-        start = time.time()
 
         while True:
             try:

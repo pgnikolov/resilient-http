@@ -1,4 +1,3 @@
-import pytest
 from resilient_http.session import ResilientRequestsSession
 from resilient_http.retry_policy import RetryPolicy
 
