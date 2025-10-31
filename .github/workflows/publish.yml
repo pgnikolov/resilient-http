@@ -6,7 +6,6 @@ on:
       - "v*.*.*"
 
 permissions:
-  id-token: write
   contents: read
 
 jobs:
@@ -35,14 +34,11 @@ jobs:
           check-wheel-contents dist/*.whl
           twine check dist/*
 
-      - name: Debug wheel metadata
+      - name: Publish to PyPI via token
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          echo "Contents of dist:"
-          ls -la dist
-          unzip -p dist/*.whl *.dist-info/METADATA
-
-      - name: Publish to PyPI via OIDC
-        uses: pypa/gh-action-pypi-publish@v1.10.3
-        with:
-          skip-existing: false
-          verify-metadata: true
+          python -m pip install --upgrade twine
+          twine upload dist/*
