@@ -3,10 +3,10 @@ name: Publish to PyPI
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*"
 
 permissions:
-  id-token: write  # Needed for PyPI trusted publisher
+  id-token: write
   contents: read
 
 jobs:
@@ -22,13 +22,19 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Clean old dist
+        run: rm -rf dist build *.egg-info
+
       - name: Install build tools
-        run: |
-          pip install build
+        run: pip install build
 
       - name: Build package
+        run: python -m build
+
+      - name: Verify package metadata
         run: |
-          python -m build
+          pip install twine
+          twine check dist/*
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.10.3
