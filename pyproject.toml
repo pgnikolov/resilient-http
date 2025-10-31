@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "0.1.1a5"
+version = "0.1.1a6"
 description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
 readme = "README.md"
 license = { file = "LICENSE" }
