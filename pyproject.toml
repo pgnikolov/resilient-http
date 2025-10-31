@@ -42,3 +42,6 @@ dev = [
 Homepage = "https://github.com/pgnikolov/resilient-http"
 Source = "https://github.com/pgnikolov/resilient-http"
 Issues = "https://github.com/pgnikolov/resilient-http/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
