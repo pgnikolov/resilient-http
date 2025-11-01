@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import Iterable, Set, Callable, Optional, Type
-
-from requests import Timeout, ConnectionError
+from requests import Timeout, ConnectionError as RequestsConnectionError
+from httpx import ConnectError as HttpxConnectError, ReadTimeout as HttpxTimeout
 
 
 @dataclass
@@ -11,7 +11,9 @@ class RetryPolicy:
     retry_on_status: Optional[Set[int]] = field(default=None)
     retry_on_exceptions: Iterable[Type[BaseException]] = (
         Timeout,
-        ConnectionError,
+        RequestsConnectionError,
+        HttpxConnectError,
+        HttpxTimeout,
     )
     retry_on_methods: Optional[Set[str]] = field(
         default=None
@@ -73,3 +75,19 @@ class RetryPolicy:
     def next_delay(self, attempt: int) -> float:
         assert self.backoff is not None
         return float(self.backoff(attempt))
+
+    def should_retry_exception(self, exc: Exception, attempt: int):
+        if attempt >= self.max_attempts:
+            return False, 0.0
+
+        # Retry on network issues (httpx, requests unified)
+        retryable = any(
+            isinstance(exc, t)
+            for t in self.retry_on_exceptions
+        )
+
+        if not retryable:
+            return False, 0.0
+
+        delay = self.next_delay(attempt)
+        return True, delay

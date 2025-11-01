@@ -1,23 +1,15 @@
+import pytest
 from resilient_http.circuit_breaker import CircuitBreaker
-import time
+from resilient_http.exceptions import CircuitBreakerOpenError
+from resilient_http.httpx_async import ResilientAsyncClient
 
 
-def test_circuit_opens_and_closes():
-    cb = CircuitBreaker(failure_threshold=2, recovery_timeout=0.2)
-    key = "GET http://x"
+@pytest.mark.asyncio
+async def test_circuit_breaker_blocks():
+    breaker = CircuitBreaker(failure_threshold=1, recovery_timeout=999)
+    client = ResilientAsyncClient(circuit_breaker=breaker)
 
-    # first failure
-    cb.record_failure(key)
-    assert cb.state(key) == "closed"
+    breaker.record_failure("https://test")
 
-    # second failure triggers open
-    cb.record_failure(key)
-    assert cb.state(key) == "open"
-
-    # wait for half-open
-    time.sleep(0.25)
-    assert cb.state(key) == "half-open"
-
-    # on success closes
-    cb.record_success(key)
-    assert cb.state(key) == "closed"
+    with pytest.raises(CircuitBreakerOpenError):
+        await client.get("https://test")

@@ -4,4 +4,4 @@ Resilience layer for Python HTTP clients.
 """
 
 __all__ = []
-__version__ = "0.1.1b5"
+__version__ = "1.0.0"
