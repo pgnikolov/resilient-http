@@ -37,8 +37,8 @@ jobs:
           pip install .[dev]
       - name: Black (check)
         run: black --check resilient_http tests examples
-      - name: Flake8
-        run: flake8 resilient_http tests
+      - name: Run Ruff
+        run: ruff check .
       - name: Mypy
         run: mypy resilient_http
 
