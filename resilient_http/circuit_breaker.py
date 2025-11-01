@@ -1,6 +1,6 @@
 import time
 from dataclasses import dataclass, field
-from typing import Dict, Optional
+from typing import Dict
 
 
 @dataclass
@@ -9,9 +9,9 @@ class CircuitBreaker:
     recovery_timeout: float = 30.0
     half_open_max_calls: int = 1
 
-    _failures: Optional[Dict[str, int]] = field(default=None)
-    _open_until: Optional[Dict[str, float]] = field(default=None)
-    _half_open_calls: Optional[Dict[str, int]] = field(default=None)
+    _failures: Dict[str, int] = field(default_factory=dict)
+    _open_until: Dict[str, float] = field(default_factory=dict)
+    _half_open_calls: Dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self):
         self._failures = {}

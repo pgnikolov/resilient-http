@@ -12,11 +12,12 @@ from .exceptions import CircuitBreakerOpenError
 class ResilientAsyncClient:
     def __init__(
         self,
-        retry_policy: Optional[object] = None,
+        retry_policy: Optional[RetryPolicy | AsyncRetryPolicy] = None,
         circuit_breaker: Optional[CircuitBreaker] = None,
         client: Optional[httpx.AsyncClient] = None,
-        on_retry: Optional[Callable[[int, Exception], Any]] = None,
+        on_retry: Optional[Callable[[int, Exception | httpx.Response], Any]] = None,
     ):
+
         #  convert sync RetryPolicy to async one automatically
         if isinstance(retry_policy, RetryPolicy):
             retry_policy = AsyncRetryPolicy(retry_policy)

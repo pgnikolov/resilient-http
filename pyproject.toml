@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "1.0.0"
+version = "1.0.1"
 description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -36,7 +36,6 @@ dev = [
     "pytest",
     "pytest-asyncio",
     "black",
-    "flake8",
     "mypy",
     "build",
     "types-requests",
@@ -47,3 +46,15 @@ dev = [
 [tool.setuptools]
 packages = { find = { include = ["resilient_http"], exclude = ["tests*", "examples*"] } }
 include-package-data = true
+
+[tool.ruff]
+line-length = 88
+extend-ignore = ["E203"]
+
+[tool.black]
+line-length = 88
+
+[tool.mypy]
+python_version = "3.9"
+ignore_missing_imports = true
+strict = false

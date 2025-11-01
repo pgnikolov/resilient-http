@@ -9,7 +9,11 @@ class AsyncRetryPolicy:
     def __init__(self, base: Optional[RetryPolicy] = None):
         self.base = base or RetryPolicy()
 
-    def should_retry_response(self, response: httpx.Response, attempt: int) -> bool:
+    def should_retry_response(
+        self,
+        response: httpx.Response,
+        attempt: int,
+    ) -> bool:
         # Some mock responses have no request object; handle safely
         try:
             method = response.request.method
