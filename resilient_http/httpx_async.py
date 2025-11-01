@@ -56,7 +56,9 @@ class ResilientAsyncClient:
 
             except Exception as exc:
                 # Check if we should retry exception
-                should_retry, delay = self.retry_policy.should_retry_exception(exc, attempts)
+                should_retry, delay = self.retry_policy.should_retry_exception(
+                    exc, attempts
+                )
 
                 if not should_retry:
                     self.circuit_breaker.record_failure(key)

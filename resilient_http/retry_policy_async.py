@@ -22,7 +22,9 @@ class AsyncRetryPolicy:
             status=response.status_code,
         )
 
-    def should_retry_exception(self, exc: Exception, attempt: int) -> Tuple[bool, float]:
+    def should_retry_exception(
+        self, exc: Exception, attempt: int
+    ) -> Tuple[bool, float]:
         retry = self.base.should_retry(
             method="GET",  # safe default for tests/unknown
             attempt=attempt,

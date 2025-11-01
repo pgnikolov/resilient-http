@@ -5,6 +5,7 @@ from resilient_http.circuit_breaker import CircuitBreaker
 from resilient_http.retry_policy_async import AsyncRetryPolicy
 from resilient_http.exceptions import CircuitBreakerOpenError
 
+
 @pytest.mark.asyncio
 async def test_retry_and_success():
     # Mock server response
@@ -16,8 +17,7 @@ async def test_retry_and_success():
 
     transport = httpx.MockTransport(handler)
     client = ResilientAsyncClient(
-        client=httpx.AsyncClient(transport=transport),
-        retry_policy=AsyncRetryPolicy()
+        client=httpx.AsyncClient(transport=transport), retry_policy=AsyncRetryPolicy()
     )
 
     response = await client.get("http://test")

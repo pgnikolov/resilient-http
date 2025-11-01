@@ -16,9 +16,7 @@ async def test_async_retry_success(monkeypatch):
             raise httpx.ConnectError("boom", request=None)
         return httpx.Response(200)
 
-    client = ResilientAsyncClient(
-        retry_policy=RetryPolicy(max_attempts=5)
-    )
+    client = ResilientAsyncClient(retry_policy=RetryPolicy(max_attempts=5))
 
     monkeypatch.setattr(client.client, "request", mock_request)
 
@@ -37,4 +35,3 @@ async def test_circuit_breaker_blocks(monkeypatch):
 
     with pytest.raises(CircuitBreakerOpenError):
         await client.get("https://test")
-

@@ -1,6 +1,7 @@
 import asyncio
 from resilient_http.httpx_async import ResilientAsyncClient
 
+
 async def main():
     client = ResilientAsyncClient()
 
@@ -8,5 +9,6 @@ async def main():
 
     resp = await client.get("https://httpbin.org/status/503")
     print("Status:", resp.status_code)
+
 
 asyncio.run(main())

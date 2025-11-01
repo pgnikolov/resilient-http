@@ -81,10 +81,7 @@ class RetryPolicy:
             return False, 0.0
 
         # Retry on network issues (httpx, requests unified)
-        retryable = any(
-            isinstance(exc, t)
-            for t in self.retry_on_exceptions
-        )
+        retryable = any(isinstance(exc, t) for t in self.retry_on_exceptions)
 
         if not retryable:
             return False, 0.0
