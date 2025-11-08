@@ -1,14 +1,19 @@
 from resilient_http.metrics import MetricsSink
 
+
 class DummyMetrics(MetricsSink):
     def __init__(self):
         self.events = []
+
     def record_retry(self, key, attempt, reason, delay):
         self.events.append(("retry", key, reason))
+
     def record_circuit_state(self, key, state):
         self.events.append(("state", key, state))
+
     def record_request_latency(self, key, latency, success):
         self.events.append(("latency", key, latency, success))
+
 
 def test_metrics_callbacks():
     m = DummyMetrics()

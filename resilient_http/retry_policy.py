@@ -26,6 +26,7 @@ class RetryPolicy:
         # Import backoff lazily to avoid circular dependencies
         if self.backoff is None:
             from .backoff import full_jitter, exponential_backoff
+
             exp = exponential_backoff()
             self.backoff = full_jitter(exp)
 
@@ -82,7 +83,9 @@ class RetryPolicy:
         return float(self.backoff(attempt))
 
     # Convenience helper
-    def should_retry_exception(self, exc: Exception, attempt: int) -> Tuple[bool, float]:
+    def should_retry_exception(
+        self, exc: Exception, attempt: int
+    ) -> Tuple[bool, float]:
         """Return (should_retry, delay) tuple for an exception."""
         if attempt >= self.max_attempts - 1:
             return False, 0.0

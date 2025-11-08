@@ -65,7 +65,9 @@ class ResilientRequestsSession:
                 return response
 
             # Retry path on HTTP error
-            if self.retry_policy.should_retry(method, attempt, status=response.status_code):
+            if self.retry_policy.should_retry(
+                method, attempt, status=response.status_code
+            ):
                 delay = self.retry_policy.next_delay(attempt)
 
                 logger.debug(

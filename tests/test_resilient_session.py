@@ -2,6 +2,7 @@ import requests
 from resilient_http.resilient_session import ResilientRequestsSession
 from resilient_http.retry_policy import RetryPolicy
 
+
 def test_sync_retry_and_cb(monkeypatch):
     calls = {"count": 0}
 

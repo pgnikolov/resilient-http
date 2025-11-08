@@ -53,13 +53,17 @@ class ResilientAsyncClient:
 
                 # Retry based on status code
                 if response.status_code >= 400:
-                    if self.retry_policy.should_retry(method, attempt, status=response.status_code):
+                    if self.retry_policy.should_retry(
+                        method, attempt, status=response.status_code
+                    ):
                         delay = self.retry_policy.next_delay(attempt)
                         logger.debug(
                             f"event='retry' url='{url}' attempt={attempt} delay={delay:.2f}s reason='status_{response.status_code}'"
                         )
                         if self.metrics:
-                            self.metrics.record_retry(key, attempt, f"status_{response.status_code}", delay)
+                            self.metrics.record_retry(
+                                key, attempt, f"status_{response.status_code}", delay
+                            )
                         if callable(self.on_retry):
                             self.on_retry(attempt, response)
                         await asyncio.sleep(delay)
@@ -73,7 +77,9 @@ class ResilientAsyncClient:
                 if self.metrics:
                     self.metrics.record_request_latency(key, latency, False)
 
-                should_retry, delay = self.retry_policy.should_retry_exception(exc, attempt)
+                should_retry, delay = self.retry_policy.should_retry_exception(
+                    exc, attempt
+                )
                 if not should_retry:
                     self.circuit_breaker.record_failure(key)
                     raise
@@ -82,7 +88,9 @@ class ResilientAsyncClient:
                     f"event='retry' url='{url}' attempt={attempt} delay={delay:.2f}s reason='{exc.__class__.__name__}'"
                 )
                 if self.metrics:
-                    self.metrics.record_retry(key, attempt, exc.__class__.__name__, delay)
+                    self.metrics.record_retry(
+                        key, attempt, exc.__class__.__name__, delay
+                    )
                 if callable(self.on_retry):
                     self.on_retry(attempt, exc)
                 await asyncio.sleep(delay)

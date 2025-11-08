@@ -20,7 +20,9 @@ async def test_async_retry_and_circuitbreaker(monkeypatch):
     cb = CircuitBreaker(failure_threshold=2, recovery_timeout=0.1)
 
     inner_client = httpx.AsyncClient(transport=transport)
-    async with ResilientAsyncClient(client=inner_client, retry_policy=retry_policy, circuit_breaker=cb) as client:
+    async with ResilientAsyncClient(
+        client=inner_client, retry_policy=retry_policy, circuit_breaker=cb
+    ) as client:
         response = await client.get("https://test.local")
         assert response.status_code == 200
         assert calls["n"] == 3

@@ -30,7 +30,5 @@ def test_retry_conflict_validation():
     # Conflicting status sets should raise ValueError
     with pytest.raises(ValueError):
         RetryPolicy(
-            max_attempts=2,
-            retry_on_status={500},
-            give_up_on_status={500}
+            max_attempts=2, retry_on_status={500}, give_up_on_status={500}
         ).validate()

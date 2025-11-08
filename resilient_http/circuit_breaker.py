@@ -6,6 +6,7 @@ from .metrics import MetricsSink
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class CircuitBreaker:
     """Lightweight circuit breaker with metrics and structured logging."""
@@ -76,7 +77,9 @@ class CircuitBreaker:
             already_open = key in self._open_until
             self._open_until[key] = time.time() + self.recovery_timeout
             if not already_open:
-                logger.info(f'event="cb_open" key="{key}" failures={self._failures.get(key, 0)}')
+                logger.info(
+                    f'event="cb_open" key="{key}" failures={self._failures.get(key, 0)}'
+                )
                 if self.metrics:
                     self.metrics.record_circuit_state(key, "open")
                 if callable(self.on_open):

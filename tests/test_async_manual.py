@@ -22,7 +22,9 @@ async def test_retry_and_success():
 
     retry_policy = RetryPolicy(max_attempts=2)
 
-    async with ResilientAsyncClient(client=inner_client, retry_policy=retry_policy) as client:
+    async with ResilientAsyncClient(
+        client=inner_client, retry_policy=retry_policy
+    ) as client:
         response = await client.get("http://test.local/resource")
         assert response.status_code == 200
         assert response.text == "OK"

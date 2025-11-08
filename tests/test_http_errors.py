@@ -1,5 +1,6 @@
 from resilient_http.retry_policy import RetryPolicy
 
+
 def test_http_error_status_behavior():
     policy = RetryPolicy(max_attempts=3)
 

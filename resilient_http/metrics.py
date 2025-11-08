@@ -5,9 +5,13 @@ from typing import Protocol, Dict, Any, List
 class MetricsSink(Protocol):
     """Interface for structured observability of retries and circuit breaker events."""
 
-    def record_retry(self, key: str, attempt: int, reason: str, delay: float) -> None: ...
+    def record_retry(
+        self, key: str, attempt: int, reason: str, delay: float
+    ) -> None: ...
     def record_circuit_state(self, key: str, state: str) -> None: ...
-    def record_request_latency(self, key: str, latency: float, success: bool) -> None: ...
+    def record_request_latency(
+        self, key: str, latency: float, success: bool
+    ) -> None: ...
 
 
 class InMemoryMetricsSink:
@@ -35,7 +39,9 @@ class InMemoryMetricsSink:
     def record_retry(self, key: str, attempt: int, reason: str, delay: float) -> None:
         entry = self._get_entry(key)
         entry["retries"] += 1
-        print(f"[metrics] RETRY key={key} attempt={attempt} delay={delay:.3f}s reason={reason}")
+        print(
+            f"[metrics] RETRY key={key} attempt={attempt} delay={delay:.3f}s reason={reason}"
+        )
 
     def record_circuit_state(self, key: str, state: str) -> None:
         entry = self._get_entry(key)
