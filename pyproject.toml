@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "1.0.8"
+version = "1.0.9"
 description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -49,6 +49,12 @@ where = ["."]
 include = ["resilient_http*"]
 exclude = ["tests*", "examples*"]
 
+[tool.setuptools.package-data]
+"resilient_http" = ["py.typed"]
+
+[tool.setuptools]
+include-package-data = true
+license-files = ["LICENSE"]
 
 [tool.ruff]
 line-length = 88
