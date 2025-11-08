@@ -9,8 +9,7 @@ jobs:
   publish:
     name: Publish to PyPI
     runs-on: ubuntu-latest
-    needs: [build]
-    if: github.event_name == 'release' && github.event.action == 'published'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,7 +30,7 @@ jobs:
           python -m build
           twine check dist/*
 
-      - name: Upload to PyPI (manual Twine)
+      - name: Upload to PyPI
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
