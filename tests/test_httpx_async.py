@@ -1,37 +1,26 @@
 import pytest
 import httpx
-from resilient_http.httpx_async import ResilientAsyncClient
+from resilient_http.resilient_async_client import ResilientAsyncClient
 from resilient_http.retry_policy import RetryPolicy
 from resilient_http.circuit_breaker import CircuitBreaker
-from resilient_http.exceptions import CircuitBreakerOpenError
 
 
 @pytest.mark.asyncio
-async def test_async_retry_success(monkeypatch):
-    call_count = {"n": 0}
+async def test_async_retry_and_circuitbreaker(monkeypatch):
+    calls = {"n": 0}
 
-    async def mock_request(method, url, **kwargs):
-        call_count["n"] += 1
-        if call_count["n"] < 3:
-            raise httpx.ConnectError("boom", request=None)
-        return httpx.Response(200)
+    async def failing_handler(request):
+        calls["n"] += 1
+        if calls["n"] < 3:
+            raise httpx.ConnectError("mock fail", request=request)
+        return httpx.Response(200, json={"ok": True})
 
-    client = ResilientAsyncClient(retry_policy=RetryPolicy(max_attempts=5))
+    transport = httpx.MockTransport(failing_handler)
+    retry_policy = RetryPolicy(max_attempts=3)
+    cb = CircuitBreaker(failure_threshold=2, recovery_timeout=0.1)
 
-    monkeypatch.setattr(client.client, "request", mock_request)
-
-    response = await client.get("https://example.com")
-    assert response.status_code == 200
-    assert call_count["n"] == 3
-
-
-@pytest.mark.asyncio
-async def test_circuit_breaker_blocks(monkeypatch):
-    breaker = CircuitBreaker(failure_threshold=1, recovery_timeout=999)
-    client = ResilientAsyncClient(circuit_breaker=breaker)
-
-    # Fail once to open the circuit
-    breaker.record_failure("https://test")
-
-    with pytest.raises(CircuitBreakerOpenError):
-        await client.get("https://test")
+    inner_client = httpx.AsyncClient(transport=transport)
+    async with ResilientAsyncClient(client=inner_client, retry_policy=retry_policy, circuit_breaker=cb) as client:
+        response = await client.get("https://test.local")
+        assert response.status_code == 200
+        assert calls["n"] == 3

@@ -1,18 +1,10 @@
-from resilient_http.session import ResilientRequestsSession
 from resilient_http.retry_policy import RetryPolicy
 
+def test_http_error_status_behavior():
+    policy = RetryPolicy(max_attempts=3)
 
-def test_no_retry_on_400(monkeypatch):
-    class FakeResp:
-        status_code = 400
-
-    class FakeSession:
-        def request(self, *a, **k):
-            return FakeResp()
-
-    s = ResilientRequestsSession(
-        retry_policy=RetryPolicy(max_attempts=3), session=FakeSession()
-    )
-
-    resp = s.get("http://example.com")
-    assert resp.status_code == 400
+    # 429 should be retried
+    assert policy.should_retry("GET", 0, status=429)
+    # 400/404 should NOT be retried
+    for status in [400, 401, 403, 404]:
+        assert not policy.should_retry("GET", 0, status=status)

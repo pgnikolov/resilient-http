@@ -1,0 +1,12 @@
+[run]
+omit =
+    */__init__.py
+    tests/*
+    examples/*
+    .venv/*
+    setup.py
+
+[report]
+show_missing = True
+skip_empty = True
+precision = 1

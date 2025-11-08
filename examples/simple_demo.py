@@ -1,4 +1,4 @@
-from resilient_http.session import ResilientRequestsSession
+from resilient_http.resilient_session import ResilientRequestsSession
 
 s = ResilientRequestsSession()
 r = s.get("https://httpbin.org/status/503")
