@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "resilient-http"
-version = "1.0.9"
+version = "1.0.10"
 description = "Resilience layer for Python HTTP clients (smart retries, jitter backoff, circuit breaker)"
 readme = "README.md"
-license = { file = "LICENSE" }
+license = "MIT"
 authors = [{ name = "Plamen Nikolov" }]
 requires-python = ">=3.9"
 dependencies = [
@@ -17,61 +17,36 @@ dependencies = [
 
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Internet :: WWW/HTTP",
 ]
 
 [project.urls]
 Homepage = "https://github.com/pgnikolov/resilient-http"
 Issues = "https://github.com/pgnikolov/resilient-http/issues"
 
-[project.optional-dependencies]
-dev = [
-    "ruff",
-    "pytest",
-    "pytest-asyncio",
-    "pytest-cov",
-    "black",
-    "mypy",
-    "build",
-    "types-requests",
-    "check-wheel-contents",
-    "twine"
-]
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["resilient_http*"]
 exclude = ["tests*", "examples*"]
 
-[tool.setuptools.package-data]
-"resilient_http" = ["py.typed"]
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "pytest-asyncio",
+    "ruff",
+    "black",
+    "mypy",
+    "build",
+    "twine",
+]
 
-[tool.setuptools]
-include-package-data = true
-license-files = ["LICENSE"]
+[tool.black]
+line-length = 88
 
 [tool.ruff]
 line-length = 88
 extend-ignore = ["E203"]
 
-[tool.black]
-line-length = 88
-
 [tool.mypy]
-python_version = "3.9"
 ignore_missing_imports = true
-strict = false
-
-[tool.pytest.ini_options]
-addopts = "-q --tb=short --disable-warnings --cov=resilient_http --cov-report=term-missing"
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-log_cli = true
-log_cli_level = "DEBUG"
-filterwarnings = ["ignore::DeprecationWarning"]
